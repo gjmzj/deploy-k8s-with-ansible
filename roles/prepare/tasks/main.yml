@@ -1,0 +1,30 @@
+- name: prepare some dirs
+  file: name={{ item }} state=directory
+  with_items:
+  - "{{ bin_dir }}"
+  - "{{ ca_dir }}"
+  - /root/.kube
+  - /etc/docker
+
+- name: 集群hosts文件更新
+  copy: src=hosts dest=/etc/hosts
+
+# ca 证书脚本参见 files/ca.script
+- name: prepare ca files
+  copy: src={{ item }} dest={{ ca_dir }}/{{ item }} mode=0644
+  with_items:
+  - ca-config.json
+  - ca-csr.json
+  - ca.csr
+  - ca.pem
+  - ca-key.pem
+
+- name: prepare ca tool binaries
+  copy: src={{ base_dir }}/bin/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
+  with_items:
+  - cfssl
+  - cfssl-certinfo
+  - cfssljson
+
+- name: prepare environment $PATH
+  template: src=profile.j2 dest=/root/.profile

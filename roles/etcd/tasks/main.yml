@@ -1,0 +1,28 @@
+- name: 下载etcd二进制文件
+  copy: src={{ base_dir }}/bin/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
+  with_items:
+  - etcd
+  - etcdctl
+
+- name: 创建etcd证书目录
+  file: name=/etc/etcd/ssl state=directory
+
+- name: 创建etcd证书和私钥
+  template: src=etcd-csr.json.j2 dest={{ ca_dir }}/etcd-csr.json
+  notify: 
+    - gen-etcd-cert
+    - install-etcd-cert
+
+- name: 创建etcd工作目录
+  file: name=/var/lib/etcd state=directory
+
+- name: 创建etcd的systemd unit文件
+  template: src=etcd.service.j2 dest=/etc/systemd/system/etcd.service
+  notify:
+    - daemon-reload
+
+- name: 开机启动etcd
+  shell: systemctl enable etcd
+
+- name: 重启etcd服务
+  shell: systemctl restart etcd

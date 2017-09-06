@@ -1,0 +1,5 @@
+- hosts: kube-cluster
+  gather_facts: False
+  roles:
+  - default
+  - kubectl

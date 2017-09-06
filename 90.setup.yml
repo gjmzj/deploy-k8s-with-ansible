@@ -1,0 +1,35 @@
+- hosts: kube-cluster
+  gather_facts: False
+  roles:
+  - default
+  - prepare
+
+- hosts: etcd
+  gather_facts: False
+  roles:
+  - default
+  - etcd
+
+- hosts: kube-cluster
+  gather_facts: False
+  roles:
+  - default
+  - kubectl
+
+- hosts: kube-cluster
+  gather_facts: False
+  roles:
+  - default
+  - flanneld
+
+- hosts: kube-master
+  gather_facts: False
+  roles:
+  - default
+  - kube-master
+
+- hosts: kube-node
+  gather_facts: False
+  roles:
+  - default
+  - kube-node

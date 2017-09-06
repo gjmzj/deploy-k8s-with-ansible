@@ -1,0 +1,11 @@
+- name: gen-etcd-cert
+  shell: "{{ bin_dir }}/cfssl gencert -ca={{ ca_dir }}/ca.pem \
+	-ca-key={{ ca_dir }}/ca-key.pem \
+	-config={{ ca_dir }}/ca-config.json \
+	-profile=kubernetes {{ ca_dir }}/etcd-csr.json | {{ bin_dir }}/cfssljson -bare etcd"
+
+- name: install-etcd-cert
+  shell: "mv etcd.csr etcd-key.pem etcd.pem /etc/etcd/ssl"
+
+- name: daemon-reload
+  shell: systemctl daemon-reload

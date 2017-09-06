@@ -1,0 +1,86 @@
+- name: 下载 docker 二进制文件
+  copy: src={{ base_dir }}/bin/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
+  with_items:
+  - docker-containerd
+  - docker-containerd-shim
+  - docker-init
+  - docker-runc
+  - docker
+  - docker-containerd-ctr
+  - dockerd
+  - docker-proxy
+
+- name: docker国内镜像
+  copy: src=daemon.json dest=/etc/docker/daemon.json
+
+- name: 创建docker的systemd unit文件
+  template: src=docker.service.j2 dest=/etc/systemd/system/docker.service
+  notify:
+    - daemon-reload
+    - enable-docker
+
+- name: flush-iptables
+  shell: iptables -F && iptables -X && iptables -F -t nat && iptables -X -t nat
+
+- name: start-docker
+  shell: systemctl restart docker
+
+- name: filter-FORWARD-ACCEPT
+  shell: sleep 5 && /sbin/iptables -P FORWARD ACCEPT
+
+- name: 确保节点重启后iptables filter FORWARD ACCEPT
+  copy: src=rc.local dest=/etc/rc.local
+
+- name: harbor证书目录创建
+  file: name=/etc/docker/certs.d/harbor.tf56.lo state=directory
+
+- name: harbor服务器证书安装
+  copy: src=ca.pem dest=/etc/docker/certs.d/harbor.tf56.lo/ca.crt
+
+- name: 下载 kubelet和kube-proxy 二进制
+  copy: src={{ base_dir }}/bin/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
+  with_items:
+  - kubelet
+  - kube-proxy
+  # kubelet-bootstrap 角色绑定
+  notify: kubelet-bootstrap-setting
+
+# 配置脚本可以参考bootstrap.kubeconfig.script
+- name: 创建bootstrap.kubeconfig配置文件
+  template: src=bootstrap.kubeconfig.j2 dest=/etc/kubernetes/bootstrap.kubeconfig
+
+- name: 创建kubelet的工作目录
+  file: name=/var/lib/kubelet state=directory
+
+- name: 创建kubelet的systemd unit文件
+  template: src=kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
+  notify:
+    - daemon-reload
+    - enable-kubelet
+    - start-kubelet
+    - approve-kubelet-csr
+
+- name: 安装kube-proxy 客户端证书和私钥
+  copy: src={{ item }} dest={{ ca_dir }}/{{ item }}
+  with_items:
+  - kube-proxy.pem
+  - kube-proxy-key.pem
+
+# 配置脚本可以参考kube-proxy.kubeconfig.script
+- name: 创建kube-proxy.kubeconfig配置文件
+  template: src=kube-proxy.kubeconfig.j2 dest=/etc/kubernetes/kube-proxy.kubeconfig
+
+- name: 创建kube-proxy的工作目录
+  file: name=/var/lib/kube-proxy state=directory
+
+- name: 创建kube-proxy的systemd unit文件
+  template: src=kube-proxy.service.j2 dest=/etc/systemd/system/kube-proxy.service
+  notify:
+    - daemon-reload
+    - enable-kube-proxy
+
+- name: start-kubelet
+  shell: systemctl restart kubelet
+
+- name: start-kube-proxy
+  shell: systemctl restart kube-proxy

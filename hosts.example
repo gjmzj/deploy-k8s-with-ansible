@@ -1,0 +1,29 @@
+[k8s]
+192.168.1.121 NODE_NAME=etcd1 NODE_IP="192.168.1.121"
+192.168.1.122 NODE_NAME=etcd2 NODE_IP="192.168.1.122"
+192.168.1.123 NODE_NAME=etcd3 NODE_IP="192.168.1.123"
+192.168.1.124 NODE_NAME=node1 NODE_IP="192.168.1.124"
+#192.168.1.125 NODE_NAME=node2 NODE_IP="192.168.1.125"
+
+[deploy-node]
+192.168.1.121
+
+# 需根据实际etcd集群地址设置 roles/default/defauts/main.yml中 ETCD_NODES, ETCD_ENDPOINTS 变量
+[etcd]
+192.168.1.121
+192.168.1.122
+192.168.1.123
+
+[kube-master]
+192.168.1.121
+192.168.1.122
+
+[kube-node]
+192.168.1.122
+192.168.1.123
+192.168.1.124
+#192.168.1.125
+
+[kube-cluster:children]
+kube-node
+kube-master

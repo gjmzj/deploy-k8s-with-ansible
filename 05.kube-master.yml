@@ -1,0 +1,5 @@
+- hosts: kube-master
+  gather_facts: False
+  roles:
+  - default
+  - kube-master

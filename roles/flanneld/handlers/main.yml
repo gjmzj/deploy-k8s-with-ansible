@@ -1,0 +1,4 @@
+- name: save-to-etcd
+  shell: /bin/bash /tmp/save_to_etcd.sh
+- name: daemon-reload
+  shell: systemctl daemon-reload

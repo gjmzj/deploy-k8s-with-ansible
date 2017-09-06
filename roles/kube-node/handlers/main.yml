@@ -1,0 +1,30 @@
+- name: daemon-reload
+  shell: systemctl daemon-reload
+
+- name: enable-docker
+  shell: systemctl enable docker
+
+# kubelet 启动时向 kube-apiserver 发送 TLS bootstrapping 请求，需要绑定该角色
+# 只需单节点执行一次，重复执行的报错可以忽略
+- name: kubelet-bootstrap-setting
+  shell: "{{ bin_dir }}/kubectl create clusterrolebinding kubelet-bootstrap \
+        --clusterrole=system:node-bootstrapper --user=kubelet-bootstrap"
+  when: NODE_NAME is defined and NODE_NAME == "node1"
+  ignore_errors: true
+
+- name: enable-kubelet
+  shell: systemctl enable kubelet
+
+- name: start-kubelet
+  shell: systemctl restart kubelet
+
+- name: approve-kubelet-csr
+  shell: "{{ bin_dir }}/kubectl get csr|grep 'Pending' | awk 'NR>0{print $1}'| xargs {{ bin_dir }}/kubectl certificate approve"
+  when: NODE_NAME is defined and NODE_NAME == "node1"
+  ignore_errors: true
+
+- name: enable-kube-proxy
+  shell: systemctl enable kube-proxy
+
+- name: start-kube-proxy
+  shell: systemctl restart kube-proxy

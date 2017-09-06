@@ -1,0 +1,5 @@
+- name: Configure defaults
+  debug:
+    msg: "加载默认配置roles/default/defaults/main.yml"
+  tags:
+    - always

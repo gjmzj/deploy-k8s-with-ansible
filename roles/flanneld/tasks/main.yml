@@ -1,0 +1,27 @@
+- name: 安装flanneld证书和私钥
+  copy: src={{ item }} dest={{ ca_dir }}/{{ item }}
+  with_items:
+  - flanneld.pem
+  - flanneld-key.pem
+
+- name: 写入集群 Pod 网段信息到 etcd
+  template: src=save_to_etcd.sh.j2 dest=/tmp/save_to_etcd.sh
+  when: NODE_NAME is defined and NODE_NAME == "etcd1"
+  notify: save-to-etcd
+
+- name: 下载flanneld二进制
+  copy: src={{ base_dir }}/bin/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
+  with_items:
+  - flanneld
+  - mk-docker-opts.sh
+
+- name: 创建 flanneld 的 systemd unit 文件
+  template: src=flanneld.service.j2 dest=/etc/systemd/system/flanneld.service
+  notify:
+    - daemon-reload
+
+- name: 开机启动flanneld
+  shell: systemctl enable flanneld
+
+- name: 重新启动flanneld
+  shell: systemctl restart flanneld

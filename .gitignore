@@ -1,0 +1,5 @@
+down/*
+!down/download.sh
+bin/
+ansible.cfg
+hosts
