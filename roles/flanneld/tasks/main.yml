@@ -19,9 +19,7 @@
   template: src=flanneld.service.j2 dest=/etc/systemd/system/flanneld.service
   notify:
     - daemon-reload
-
-- name: 开机启动flanneld
-  shell: systemctl enable flanneld
+    - enable-flanneld
 
 - name: 重新启动flanneld
   shell: systemctl restart flanneld

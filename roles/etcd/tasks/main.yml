@@ -20,9 +20,7 @@
   template: src=etcd.service.j2 dest=/etc/systemd/system/etcd.service
   notify:
     - daemon-reload
-
-- name: 开机启动etcd
-  shell: systemctl enable etcd
+    - enable-etcd
 
 - name: 重启etcd服务
   shell: systemctl restart etcd

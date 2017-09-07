@@ -1,5 +1,4 @@
 - hosts: kube-node
   gather_facts: False
   roles:
-  - default
   - kube-node

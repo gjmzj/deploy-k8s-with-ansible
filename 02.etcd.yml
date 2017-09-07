@@ -1,5 +1,4 @@
 - hosts: etcd
   gather_facts: False
   roles:
-  - default
   - etcd

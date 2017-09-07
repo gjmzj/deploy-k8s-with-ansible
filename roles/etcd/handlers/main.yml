@@ -9,3 +9,6 @@
 
 - name: daemon-reload
   shell: systemctl daemon-reload
+
+- name: enable-etcd
+  shell: systemctl enable etcd
