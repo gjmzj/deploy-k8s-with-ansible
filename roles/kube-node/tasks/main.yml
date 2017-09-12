@@ -15,9 +15,12 @@
 
 - name: 创建docker的systemd unit文件
   template: src=docker.service.j2 dest=/etc/systemd/system/docker.service
-  notify:
-    - daemon-reload
-    - enable-docker
+
+- name: daemon-reload
+  shell: systemctl daemon-reload
+
+- name: enable-docker
+  shell: systemctl enable docker
 
 - name: flush-iptables
   shell: iptables -F && iptables -X && iptables -F -t nat && iptables -X -t nat
@@ -42,8 +45,14 @@
   with_items:
   - kubelet
   - kube-proxy
-  # kubelet-bootstrap 角色绑定
-  notify: kubelet-bootstrap-setting
+
+# kubelet 启动时向 kube-apiserver 发送 TLS bootstrapping 请求，需要绑定该角色
+# 只需单节点执行一次，重复执行的报错可以忽略
+- name: kubelet-bootstrap-setting
+  shell: "{{ bin_dir }}/kubectl create clusterrolebinding kubelet-bootstrap \
+        --clusterrole=system:node-bootstrapper --user=kubelet-bootstrap"
+  when: NODE_NAME is defined and NODE_NAME == "node1"
+  ignore_errors: true
 
 # 配置脚本可以参考bootstrap.kubeconfig.script
 - name: 创建bootstrap.kubeconfig配置文件
@@ -54,11 +63,20 @@
 
 - name: 创建kubelet的systemd unit文件
   template: src=kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
-  notify:
-    - daemon-reload
-    - enable-kubelet
-    - start-kubelet
-    - approve-kubelet-csr
+
+- name: daemon-reload
+  shell: systemctl daemon-reload
+
+- name: enable-kubelet
+  shell: systemctl enable kubelet
+
+- name: start-kubelet
+  shell: systemctl restart kubelet
+
+- name: approve-kubelet-csr
+  shell: "{{ bin_dir }}/kubectl get csr|grep 'Pending' | awk 'NR>0{print $1}'| xargs {{ bin_dir }}/kubectl certificate approve"
+  when: NODE_NAME is defined and NODE_NAME == "node1"
+  ignore_errors: true
 
 - name: 安装kube-proxy 客户端证书和私钥
   copy: src={{ item }} dest={{ ca_dir }}/{{ item }}
@@ -75,12 +93,12 @@
 
 - name: 创建kube-proxy的systemd unit文件
   template: src=kube-proxy.service.j2 dest=/etc/systemd/system/kube-proxy.service
-  notify:
-    - daemon-reload
-    - enable-kube-proxy
 
-- name: start-kubelet
-  shell: systemctl restart kubelet
+- name: daemon-reload
+  shell: systemctl daemon-reload
+
+- name: enable-kube-proxy
+  shell: systemctl enable kube-proxy
 
 - name: start-kube-proxy
   shell: systemctl restart kube-proxy

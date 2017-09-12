@@ -6,8 +6,8 @@
   - /root/.kube
   - /etc/docker
 
-- name: 集群hosts文件更新
-  template: src=hosts.j2 dest=/etc/hosts
+#- name: 集群hosts文件更新
+#  template: src=hosts.j2 dest=/etc/hosts
 
 # ca 证书脚本参见 files/ca.script
 - name: prepare ca files

@@ -1,9 +1,9 @@
 #!/bin/bash
 #主要组件版本如下
-export K8S_VER=v1.7.4
-export ETCD_VER=v3.2.6
+export K8S_VER=v1.7.5
+export ETCD_VER=v3.2.7
 export FLANNEL_VER=v0.8.0
-export DOCKER_VER=17.06.1-ce
+export DOCKER_VER=17.06.2-ce
 
 echo "\n----download k8s binary at:"
 echo https://dl.k8s.io/${K8S_VER}/kubernetes-server-linux-amd64.tar.gz
@@ -23,7 +23,7 @@ echo https://pkg.cfssl.org/R1.2/cfssl_linux-amd64
 echo https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64
 echo https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64
 
-echo "\n因为网络原因不进行自动下载，否则脚本执行不可控制"
+echo "\n注意1：因为网络原因不进行自动下载，否则脚本执行不可控制"
 echo "请按照以上链接手动下载二进制包到down目录中，包含如下："
 echo "-rw-r--r-- 1 root root   6595195 Mar 30  2016 cfssl-certinfo_linux-amd64"
 echo "-rw-r--r-- 1 root root   2277873 Mar 30  2016 cfssljson_linux-amd64"
@@ -32,6 +32,9 @@ echo "-rwxr--r-- 1 root root  29699281 Aug 24 17:09 docker-17.06.1-ce.tgz*"
 echo "-rwxr--r-- 1 root root  10176124 Aug 24 17:09 etcd-v3.2.6-linux-amd64.tar.gz*"
 echo "-rwxr--r-- 1 root root   9090192 Aug 24 17:09 flannel-v0.8.0-linux-amd64.tar.gz*"
 echo "-rwxr--r-- 1 root root 437406487 Aug 24 17:09 kubernetes-server-linux-amd64.tar.gz*"
+
+echo "\n注意2：如果还没有手工下载tar包，请Ctrl-c结束此脚本\nsleep 60"
+sleep 60
 
 mkdir -p ../bin
 mv cfssl_linux-amd64 ../bin/cfssl

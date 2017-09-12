@@ -21,4 +21,16 @@
 1. 准备4台虚机(物理机也可，虚机实验更方便)，安装Ubuntu16.04(centos7理论上一样，不想ansible脚本太多条件判断)
 1. 准备一台部署机(可以复用上述4台虚机)，安装ansible，配置到4台目标机器ssh无密码登陆等
 1. 准备外部负载均衡，准备master节点的vip地址
-1. 规划集群节点，完成ansible inventory文件[参考](hosts) 
+1. 规划集群节点，完成ansible inventory文件[参考](hosts)
+
+### 安装操作系统
+准备4台虚机(物理机也可，虚机实验更方便)，安装Ubuntu16.04
+### 准备一台部署机(可以复用上述4台虚机)，安装ansible，配置到4台目标机器ssh无密码登陆等
+``` bash
+apt install python-pip
+pip install pip --upgrade
+pip install ansible
+ssh-keygen -t rsa -b 2048
+ssh-copy-id Server_IP
+
+``` 

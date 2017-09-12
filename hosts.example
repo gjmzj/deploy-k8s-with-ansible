@@ -1,27 +1,28 @@
 [k8s]
-192.168.1.121 NODE_NAME=etcd1 NODE_IP="192.168.1.121"
-192.168.1.122 NODE_NAME=etcd2 NODE_IP="192.168.1.122"
-192.168.1.123 NODE_NAME=etcd3 NODE_IP="192.168.1.123"
-192.168.1.124 NODE_NAME=node1 NODE_IP="192.168.1.124"
-#192.168.1.125 NODE_NAME=node2 NODE_IP="192.168.1.125"
-
-[deploy-node]
-192.168.1.121
+192.168.1.43 NODE_NAME=etcd1 NODE_IP="192.168.1.43"
+192.168.1.44 NODE_NAME=etcd2 NODE_IP="192.168.1.44"
+192.168.1.45 NODE_NAME=etcd3 NODE_IP="192.168.1.45"
+192.168.1.48 NODE_NAME=node1 NODE_IP="192.168.1.48"
+192.168.1.40 NODE_NAME=node2 NODE_IP="192.168.1.40"
+192.168.1.46 NODE_NAME=node3 NODE_IP="192.168.1.46"
 
 [etcd]
-192.168.1.121
-192.168.1.122
-192.168.1.123
+192.168.1.43
+192.168.1.44
+192.168.1.45
 
 [kube-master]
-192.168.1.121
-192.168.1.122
+192.168.1.43
+192.168.1.44
+192.168.1.45
 
 [kube-node]
-192.168.1.122
-192.168.1.123
-192.168.1.124
-#192.168.1.125
+192.168.1.48
+192.168.1.40
+192.168.1.46
+192.168.1.43
+192.168.1.44
+192.168.1.45
 
 [kube-cluster:children]
 kube-node
@@ -38,13 +39,13 @@ ca_dir="/etc/kubernetes/ssl"
 base_dir="/etc/ansible"
 
 #集群 MASTER IP
-MASTER_IP="192.168.1.129"
+MASTER_IP="192.168.1.7"
 
 #集群 APISERVER
-KUBE_APISERVER="https://192.168.1.129:6443"
+KUBE_APISERVER="https://192.168.1.7:6443"
 
 #TLS Bootstrapping 使用的 Token，使用 head -c 16 /dev/urandom | od -An -t x | tr -d ' ' 生成
-BOOTSTRAP_TOKEN="8d1ff0b6445dae1x0378ftf56aa866b8"
+BOOTSTRAP_TOKEN="d18f94b5fa585c7123f56803d925d2e7"
 
 # 服务网段 (Service CIDR），部署前路由不可达，部署后集群内使用 IP:Port 可达
 SERVICE_CIDR="10.68.0.0/16"
@@ -68,7 +69,7 @@ CLUSTER_DNS_SVC_IP="10.68.0.2"
 CLUSTER_DNS_DOMAIN="cluster.local."
 
 # etcd 集群间通信的IP和端口, **根据实际 etcd 集群成员设置**
-ETCD_NODES="etcd1=https://192.168.1.121:2380,etcd2=https://192.168.1.122:2380,etcd3=https://192.168.1.123:2380"
+ETCD_NODES="etcd1=https://192.168.1.43:2380,etcd2=https://192.168.1.44:2380,etcd3=https://192.168.1.45:2380"
 
 # etcd 集群服务地址列表, **根据实际 etcd 集群成员设置**
-ETCD_ENDPOINTS="https://192.168.1.121:2379,https://192.168.1.122:2379,https://192.168.1.123:2379"
+ETCD_ENDPOINTS="https://192.168.1.43:2379,https://192.168.1.44:2379,https://192.168.1.45:2379"
