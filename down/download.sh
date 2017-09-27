@@ -1,9 +1,9 @@
 #!/bin/bash
 #主要组件版本如下
-export K8S_VER=v1.7.5
-export ETCD_VER=v3.2.7
+export K8S_VER=v1.7.6
+export ETCD_VER=v3.2.6
 export FLANNEL_VER=v0.8.0
-export DOCKER_VER=17.06.2-ce
+export DOCKER_VER=17.06.1-ce
 
 echo "\n----download k8s binary at:"
 echo https://dl.k8s.io/${K8S_VER}/kubernetes-server-linux-amd64.tar.gz
