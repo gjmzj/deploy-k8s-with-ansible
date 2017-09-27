@@ -6,10 +6,10 @@ Requires=docker.service
 
 [Service]
 WorkingDirectory=/var/lib/kubelet
+#--pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest
 ExecStart={{ bin_dir }}/kubelet \
   --address={{ NODE_IP }} \
   --hostname-override={{ NODE_IP }} \
-#  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
   --pod-infra-container-image=harbor.tf56.lo/k8s/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
