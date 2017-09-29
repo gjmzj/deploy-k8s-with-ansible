@@ -1,4 +1,3 @@
 {
-  "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn", "hub-mirror.c.163.com"],
-  "max-concurrent-downloads": 10
+  "registry-mirrors": ["https://registry.docker-cn.com"] 
 }
