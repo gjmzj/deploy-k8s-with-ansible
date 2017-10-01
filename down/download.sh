@@ -23,7 +23,7 @@ echo https://pkg.cfssl.org/R1.2/cfssl_linux-amd64
 echo https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64
 echo https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64
 
-echo "\n注意1：因为网络原因不进行自动下载，否则脚本执行不可控制"
+echo "\n注意1：因为网络原因不进行自动下载"
 echo "请按照以上链接手动下载二进制包到down目录中，包含如下："
 echo "-rw-r--r-- 1 root root   6595195 Mar 30  2016 cfssl-certinfo_linux-amd64"
 echo "-rw-r--r-- 1 root root   2277873 Mar 30  2016 cfssljson_linux-amd64"
@@ -37,31 +37,65 @@ echo "\n注意2：如果还没有手工下载tar包，请Ctrl-c结束此脚本\n
 sleep 60
 
 mkdir -p ../bin
-mv cfssl_linux-amd64 ../bin/cfssl
-mv cfssljson_linux-amd64 ../bin/cfssljson
-mv cfssl-certinfo_linux-amd64 ../bin/cfssl-certinfo
+### 准备证书工具程序
+echo "\n准备证书工具程序..."
+if [ -f "cfssl_linux-amd64" ]; then
+  mv cfssl_linux-amd64 ../bin/cfssl
+else
+  echo 请先下载https://pkg.cfssl.org/R1.2/cfssl_linux-amd64
+fi
+if [ -f "cfssljson_linux-amd64" ]; then
+  mv cfssljson_linux-amd64 ../bin/cfssljson
+else
+  echo 请先下载https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64
+fi
+if [ -f "cfssl-certinfo_linux-amd64" ]; then
+  mv cfssl-certinfo_linux-amd64 ../bin/cfssl-certinfo
+else
+  echo 请先下载https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64
+fi
 
-echo "\nextracting etcd binaries..."
-tar zxf etcd-${ETCD_VER}-linux-amd64.tar.gz
-mv etcd-${ETCD_VER}-linux-amd64/etcd* ../bin
+### 准备etcd程序
+if [ -f "etcd-${ETCD_VER}-linux-amd64.tar.gz" ]; then
+  echo "\nextracting etcd binaries..."
+  tar zxf etcd-${ETCD_VER}-linux-amd64.tar.gz
+  mv etcd-${ETCD_VER}-linux-amd64/etcd* ../bin
+else
+  echo 请先下载etcd-${ETCD_VER}-linux-amd64.tar.gz
+fi
 
-echo "\nextracting flannel binaries..."
-tar zxf flannel-${FLANNEL_VER}-linux-amd64.tar.gz
-mv flanneld mk-docker-opts.sh ../bin
-rm README.md
+### 准备flannel程序
+if [ -f "flannel-${FLANNEL_VER}-linux-amd64.tar.gz" ]; then
+  echo "\nextracting flannel binaries..."
+  tar zxf flannel-${FLANNEL_VER}-linux-amd64.tar.gz
+  mv flanneld mk-docker-opts.sh ../bin
+  rm README.md
+else
+  echo 请先下载flannel-${FLANNEL_VER}-linux-amd64.tar.gz
+fi
 
-echo "\nextracting kubernetes binaries..."
-tar zxf kubernetes-server-linux-amd64.tar.gz
-mv kubernetes/server/bin/kube-apiserver ../bin
-mv kubernetes/server/bin/kube-controller-manager ../bin
-mv kubernetes/server/bin/kubectl ../bin
-mv kubernetes/server/bin/kubelet ../bin
-mv kubernetes/server/bin/kube-proxy ../bin
-mv kubernetes/server/bin/kube-scheduler ../bin
+### 准备kubernetes程序
+if [ -f "kubernetes-server-linux-amd64.tar.gz" ]; then
+  echo "\nextracting kubernetes binaries..."
+  tar zxf kubernetes-server-linux-amd64.tar.gz
+  mv kubernetes/server/bin/kube-apiserver ../bin
+  mv kubernetes/server/bin/kube-controller-manager ../bin
+  mv kubernetes/server/bin/kubectl ../bin
+  mv kubernetes/server/bin/kubelet ../bin
+  mv kubernetes/server/bin/kube-proxy ../bin
+  mv kubernetes/server/bin/kube-scheduler ../bin
+else
+  echo 请先下载kubernetes-server-linux-amd64.tar.gz
+fi
 
-echo "\nextracting docker binaries..."
-tar zxf docker-${DOCKER_VER}.tgz
-mv docker/docker* ../bin
-if [ -f "docker/completion/bash/docker" ]; then
-  mv -f docker/completion/bash/docker ../roles/kube-node/files/docker
+### 准备docker程序
+if [ -f "docker-${DOCKER_VER}.tgz" ]; then
+  echo "\nextracting docker binaries..."
+  tar zxf docker-${DOCKER_VER}.tgz
+  mv docker/docker* ../bin
+  if [ -f "docker/completion/bash/docker" ]; then
+    mv -f docker/completion/bash/docker ../roles/kube-node/files/docker
+  fi
+else
+  echo 请先下载docker-${DOCKER_VER}.tgz
 fi
