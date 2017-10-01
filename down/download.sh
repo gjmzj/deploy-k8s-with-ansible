@@ -3,7 +3,7 @@
 export K8S_VER=v1.7.6
 export ETCD_VER=v3.2.6
 export FLANNEL_VER=v0.8.0
-export DOCKER_VER=17.06.1-ce
+export DOCKER_VER=17.09.0-ce
 
 echo "\n----download k8s binary at:"
 echo https://dl.k8s.io/${K8S_VER}/kubernetes-server-linux-amd64.tar.gz
@@ -62,3 +62,6 @@ mv kubernetes/server/bin/kube-scheduler ../bin
 echo "\nextracting docker binaries..."
 tar zxf docker-${DOCKER_VER}.tgz
 mv docker/docker* ../bin
+if [ -f "docker/completion/bash/docker" ]; then
+  mv -f docker/completion/bash/docker ../roles/kube-node/files/docker
+fi

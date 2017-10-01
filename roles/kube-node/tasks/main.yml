@@ -10,6 +10,9 @@
   - dockerd
   - docker-proxy
 
+- name: docker命令自动补全
+  copy: src=docker dest=/etc/bash_completion.d/docker
+
 - name: docker国内镜像
   copy: src=daemon.json dest=/etc/docker/daemon.json
 
