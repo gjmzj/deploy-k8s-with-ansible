@@ -56,6 +56,7 @@ else
 fi
 
 ### 准备etcd程序
+echo "\n准备etcd二进制程序..."
 if [ -f "etcd-${ETCD_VER}-linux-amd64.tar.gz" ]; then
   echo "\nextracting etcd binaries..."
   tar zxf etcd-${ETCD_VER}-linux-amd64.tar.gz
@@ -65,6 +66,7 @@ else
 fi
 
 ### 准备flannel程序
+echo "\n准备flannel二进制程序..."
 if [ -f "flannel-${FLANNEL_VER}-linux-amd64.tar.gz" ]; then
   echo "\nextracting flannel binaries..."
   tar zxf flannel-${FLANNEL_VER}-linux-amd64.tar.gz
@@ -75,6 +77,7 @@ else
 fi
 
 ### 准备kubernetes程序
+echo "\n准备kubernetes二进制程序..."
 if [ -f "kubernetes-server-linux-amd64.tar.gz" ]; then
   echo "\nextracting kubernetes binaries..."
   tar zxf kubernetes-server-linux-amd64.tar.gz
@@ -89,6 +92,7 @@ else
 fi
 
 ### 准备docker程序
+echo "\n准备docker二进制程序..."
 if [ -f "docker-${DOCKER_VER}.tgz" ]; then
   echo "\nextracting docker binaries..."
   tar zxf docker-${DOCKER_VER}.tgz

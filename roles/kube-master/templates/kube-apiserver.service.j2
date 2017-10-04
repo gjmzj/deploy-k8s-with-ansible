@@ -6,12 +6,13 @@ After=network.target
 [Service]
 ExecStart={{ bin_dir }}/kube-apiserver \
   --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
-  --advertise-address={{ NODE_IP }} \
   --bind-address={{ NODE_IP }} \
   --insecure-bind-address={{ NODE_IP }} \
   --authorization-mode=RBAC \
   --runtime-config=rbac.authorization.k8s.io/v1alpha1 \
   --kubelet-https=true \
+  --anonymous-auth=false \
+  --basic-auth-file={{ ca_dir }}/basic-auth.csv \
   --experimental-bootstrap-token-auth \
   --token-auth-file=/etc/kubernetes/token.csv \
   --service-cluster-ip-range={{ SERVICE_CIDR }} \
@@ -26,7 +27,6 @@ ExecStart={{ bin_dir }}/kube-apiserver \
   --etcd-servers={{ ETCD_ENDPOINTS }} \
   --enable-swagger-ui=true \
   --allow-privileged=true \
-  --apiserver-count=3 \
   --audit-log-maxage=30 \
   --audit-log-maxbackup=3 \
   --audit-log-maxsize=100 \

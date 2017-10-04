@@ -23,6 +23,9 @@
 - name: 创建 token.csv
   template: src=token.csv.j2 dest=/etc/kubernetes/token.csv
 
+- name: 创建 basic-auth.csv
+  copy: src=basic-auth.csv dest={{ ca_dir }}/basic-auth.csv
+
 - name: 创建kube-apiserver的systemd unit文件
   template: src=kube-apiserver.service.j2 dest=/etc/systemd/system/kube-apiserver.service
 
