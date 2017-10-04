@@ -5,9 +5,9 @@
 [kube-master]
 192.168.1.1
 
-#确保node节点有变量NODE_NAME=node1
+#确保node节点有变量NODE_ID=node1
 [kube-node]
-192.168.1.1 NODE_NAME=node1 NODE_IP="192.168.1.1"
+192.168.1.1 NODE_ID=node1 NODE_IP="192.168.1.1"
 
 [kube-cluster:children]
 kube-node
