@@ -1,8 +1,8 @@
 #!/bin/bash
 #主要组件版本如下
-export K8S_VER=v1.7.6
-export ETCD_VER=v3.2.6
-export FLANNEL_VER=v0.8.0
+export K8S_VER=v1.7.7
+export ETCD_VER=v3.2.8
+export FLANNEL_VER=v0.9.0
 export DOCKER_VER=17.09.0-ce
 
 echo "\n----download k8s binary at:"
