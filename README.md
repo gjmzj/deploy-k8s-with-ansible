@@ -49,6 +49,8 @@ cp ansible.cfg.example ansible.cfg
 # 配置集群hosts
 cp hosts.allinone.example hosts
 然后根据实际情况修改此hosts文件
+# 准备二进制安装包
+sh down/download.sh #按照提示先手工下载各种tar包到 ./down目录
 # 开始安装(一步安装)
 ansible-playbook 90.setup.yml
 # 或者采用分步安装
