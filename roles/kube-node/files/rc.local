@@ -12,5 +12,6 @@
 # By default this script does nothing.
 
 sleep 15 && /sbin/iptables -P FORWARD ACCEPT
+docker ps -a|grep Exited|awk '{print $1}'|xargs docker rm > /dev/null 2>&1
 
 exit 0

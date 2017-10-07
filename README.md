@@ -60,9 +60,20 @@ ansible-playbook 02.etcd.yml
 ```
 如果执行成功，k8s集群就安装好了
 
+### 4.验证安装
+``` bash
+kubectl version
+kubectl get componentstatus # 可以看到scheduler/controller-manager/etcd等组件 Healthy
+kubectl clusterinfo # 可以看到kubernetes master(apiserver)组件 running
+kubectl get node # 可以看到单 node Ready状态
+kubectl get pod --all-namespaces # 可以查看所有集群pod状态
+kubectl get svc --all-namespaces # 可以查看所有集群服务状态
+```
+
 ## 多节点指南(文档更新中...)
 1. 准备4台虚机(物理机也可，虚机实验更方便)，安装Ubuntu16.04(centos7理论上一样，不想ansible脚本太多条件判断)
 1. 准备一台部署机(可以复用上述4台虚机)，安装ansible，配置到4台目标机器ssh无密码登陆等
 1. 准备外部负载均衡，准备master节点的vip地址
 1. 规划集群节点，完成ansible inventory文件[参考](hosts)
+1. 其他安装步骤同单节点安装
 
