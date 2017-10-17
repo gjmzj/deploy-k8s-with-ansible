@@ -58,3 +58,7 @@ ETCD_NODES="etcd1=https://192.168.1.1:2380"
 
 # etcd 集群服务地址列表, **根据实际 etcd 集群成员设置**
 ETCD_ENDPOINTS="https://192.168.1.1:2379"
+
+# 集群basic auth 使用的用户名和密码
+BASIC_AUTH_USER="admin"
+BASIC_AUTH_PASS="test1234"
