@@ -1,8 +1,12 @@
-- name: 安装flanneld证书和私钥
-  copy: src={{ item }} dest={{ ca_dir }}/{{ item }}
-  with_items:
-  - flanneld.pem
-  - flanneld-key.pem
+- name: 准备flanneld 证书签名请求
+  template: src=flanneld-csr.json.j2 dest={{ ca_dir }}/flanneld-csr.json
+
+- name: 创建 flanneld证书与私钥
+  shell: "cd {{ ca_dir }} && {{ bin_dir }}/cfssl gencert \
+        -ca={{ ca_dir }}/ca.pem \
+        -ca-key={{ ca_dir }}/ca-key.pem \
+        -config={{ ca_dir }}/ca-config.json \
+        -profile=kubernetes flanneld-csr.json | {{ bin_dir }}/cfssljson -bare flanneld"
 
 - name: 准备脚本写入集群 Pod 网段信息到 etcd
   template: src=save_to_etcd.sh.j2 dest=/tmp/save_to_etcd.sh
