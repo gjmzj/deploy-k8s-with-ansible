@@ -45,12 +45,13 @@ git clone https://gitee.com/netmon/deploy-k8s-with-ansible.git
 mv deploy-k8s-with-ansible/ /etc/ansible
 cd /etc/ansible
 # 配置ansible
-cp ansible.cfg.example ansible.cfg
+cp example/ansible.cfg.example ansible.cfg
 # 配置集群hosts
-cp hosts.allinone.example hosts
+cp example/hosts.allinone.example hosts
 然后根据实际情况修改此hosts文件
 # 准备二进制安装包
-sh down/download.sh #按照提示先手工下载各种tar包到 ./down目录
+按照down/download.sh文件提示先手工下载各种tar包到 ./down目录
+sh down/download.sh
 # 开始安装(一步安装)
 ansible-playbook 90.setup.yml
 # 或者采用分步安装

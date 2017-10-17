@@ -1,11 +1,15 @@
 - name: 下载kubectl二进制
   copy: src={{ base_dir }}/bin/kubectl dest={{ bin_dir }}/kubectl mode=0755
 
-- name: 下载admin证书
-  copy: src={{ item }} dest={{ ca_dir }}/{{ item }}
-  with_items:
-  - admin.pem
-  - admin-key.pem
+- name: 准备kubectl使用的admin 证书签名请求
+  template: src=admin-csr.json.j2 dest={{ ca_dir }}/admin-csr.json
+
+- name: 创建 admin证书与私钥
+  shell: "cd {{ ca_dir }} && {{ bin_dir }}/cfssl gencert \
+        -ca={{ ca_dir }}/ca.pem \
+        -ca-key={{ ca_dir }}/ca-key.pem \
+        -config={{ ca_dir }}/ca-config.json \
+        -profile=kubernetes admin-csr.json | {{ bin_dir }}/cfssljson -bare admin"
 
 # 创建kubectl kubeconfig 文件
 - name: 设置集群参数
