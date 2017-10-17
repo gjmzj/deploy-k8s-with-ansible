@@ -22,15 +22,7 @@ kube-node
 kube-master
 
 [kube-cluster:vars]
-#默认二进制文件目录
-bin_dir="/root/local/bin"
-
-#证书目录
-ca_dir="/etc/kubernetes/ssl"
-
-#部署目录，即 ansible 工作目录
-base_dir="/etc/ansible"
-
+# ---------集群主要参数---------------
 #集群 MASTER IP, 需要外部负载均衡，一般为VIP地址
 MASTER_IP="192.168.1.100"
 
@@ -70,3 +62,17 @@ ETCD_ENDPOINTS="https://192.168.1.1:2379,https://192.168.1.2:2379,https://192.16
 # 集群basic auth 使用的用户名和密码
 BASIC_AUTH_USER="admin"
 BASIC_AUTH_PASS="test1234"
+
+# ---------附加参数--------------------
+#默认二进制文件目录
+bin_dir="/root/local/bin"
+
+#证书目录
+ca_dir="/etc/kubernetes/ssl"
+
+#部署目录，即 ansible 工作目录
+base_dir="/etc/ansible"
+
+#私有仓库 harbor服务器 (域名或者IP)
+#需要把 harbor服务器证书复制到roles/kube-node/files/harbor-ca.crt
+HARBOR_SERVER="harbor.yourdomain.com"

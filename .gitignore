@@ -3,3 +3,4 @@ down/*
 bin/
 ansible.cfg
 hosts
+*.crt

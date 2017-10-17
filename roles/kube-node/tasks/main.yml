@@ -1,3 +1,4 @@
+## ---------docker daemon配置部分-----------
 - name: 下载 docker 二进制文件
   copy: src={{ base_dir }}/bin/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
   with_items:
@@ -11,9 +12,9 @@
   - docker-proxy
 
 - name: docker命令自动补全
-  copy: src=docker dest=/etc/bash_completion.d/docker
+  copy: src=docker dest=/etc/bash_completion.d/docker mode=0644
 
-- name: docker国内镜像
+- name: docker国内镜像加速
   copy: src=daemon.json dest=/etc/docker/daemon.json
 
 - name: 创建docker的systemd unit文件
@@ -34,15 +35,18 @@
 - name: filter-FORWARD-ACCEPT
   shell: sleep 5 && /sbin/iptables -P FORWARD ACCEPT
 
+# 如果rc.local有其他配置，根据需要修改roles/kube-node/template/rc.local.j2文件
 - name: 确保节点重启后iptables filter FORWARD ACCEPT
-  copy: src=rc.local dest=/etc/rc.local
+  template: src=rc.local.j2 dest=/etc/rc.local
 
 - name: harbor证书目录创建
-  file: name=/etc/docker/certs.d/harbor.tf56.lo state=directory
+  file: name=/etc/docker/certs.d/{{ HARBOR_SERVER }} state=directory
 
+# 需要先把harbor服务器证书复制到roles/kube-node/files/harbor-ca.crt
 - name: harbor服务器证书安装
-  copy: src=ca.pem dest=/etc/docker/certs.d/harbor.tf56.lo/ca.crt
+  copy: src=harbor-ca.crt dest=/etc/docker/certs.d/{{ HARBOR_SERVER }}/ca.crt
 
+##----------kubelet 配置部分--------------
 - name: 下载 kubelet和kube-proxy 二进制
   copy: src={{ base_dir }}/bin/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
   with_items:
@@ -57,9 +61,27 @@
   when: NODE_ID is defined and NODE_ID == "node1"
   ignore_errors: true
 
-# 配置脚本可以参考bootstrap.kubeconfig.script
-- name: 创建bootstrap.kubeconfig配置文件
-  template: src=bootstrap.kubeconfig.j2 dest=/etc/kubernetes/bootstrap.kubeconfig
+#创建bootstrap.kubeconfig配置文件
+- name: 设置集群参数
+  shell: "{{ bin_dir }}/kubectl config set-cluster kubernetes \
+        --certificate-authority={{ ca_dir }}/ca.pem \
+        --embed-certs=true \
+        --server={{ KUBE_APISERVER }} \
+        --kubeconfig=bootstrap.kubeconfig"
+- name: 设置客户端认证参数
+  shell: "{{ bin_dir }}/kubectl config set-credentials kubelet-bootstrap \
+        --token={{ BOOTSTRAP_TOKEN }} \
+        --kubeconfig=bootstrap.kubeconfig"
+- name: 设置上下文参数
+  shell: "{{ bin_dir }}/kubectl config set-context default \
+	--cluster=kubernetes \
+	--user=kubelet-bootstrap \
+	--kubeconfig=bootstrap.kubeconfig"
+- name: 选择默认上下文
+  shell: "{{ bin_dir }}/kubectl config use-context default --kubeconfig=bootstrap.kubeconfig"
+
+- name: 安装bootstrap.kubeconfig配置文件
+  shell: "mv $HOME/bootstrap.kubeconfig /etc/kubernetes/bootstrap.kubeconfig"
 
 - name: 创建kubelet的工作目录
   file: name=/var/lib/kubelet state=directory
@@ -81,16 +103,40 @@
   when: NODE_ID is defined and NODE_ID == "node1"
   ignore_errors: true
 
-- name: 安装kube-proxy 客户端证书和私钥
-  copy: src={{ item }} dest={{ ca_dir }}/{{ item }}
-  with_items:
-  - kube-proxy.pem
-  - kube-proxy-key.pem
+##-------kube-proxy部分----------------
+- name: 准备kube-proxy 证书签名请求
+  template: src=kube-proxy-csr.json.j2 dest={{ ca_dir }}/kube-proxy-csr.json
 
-# 配置脚本可以参考kube-proxy.kubeconfig.script
-- name: 创建kube-proxy.kubeconfig配置文件
-  template: src=kube-proxy.kubeconfig.j2 dest=/etc/kubernetes/kube-proxy.kubeconfig
+- name: 创建 kube-proxy证书与私钥
+  shell: "cd {{ ca_dir }} && {{ bin_dir }}/cfssl gencert \
+        -ca={{ ca_dir }}/ca.pem \
+        -ca-key={{ ca_dir }}/ca-key.pem \
+        -config={{ ca_dir }}/ca-config.json \
+        -profile=kubernetes kube-proxy-csr.json | {{ bin_dir }}/cfssljson -bare kube-proxy"
 
+#创建kube-proxy.kubeconfig配置文件
+- name: 设置集群参数
+  shell: "{{ bin_dir }}/kubectl config set-cluster kubernetes \
+        --certificate-authority={{ ca_dir }}/ca.pem \
+        --embed-certs=true \
+        --server={{ KUBE_APISERVER }} \
+        --kubeconfig=kube-proxy.kubeconfig"
+- name: 设置客户端认证参数
+  shell: "{{ bin_dir }}/kubectl config set-credentials kube-proxy \
+	--client-certificate={{ ca_dir }}/kube-proxy.pem \
+	--client-key={{ ca_dir }}/kube-proxy-key.pem \
+        --embed-certs=true \
+        --kubeconfig=kube-proxy.kubeconfig"
+- name: 设置上下文参数
+  shell: "{{ bin_dir }}/kubectl config set-context default \
+        --cluster=kubernetes \
+        --user=kube-proxy \
+        --kubeconfig=kube-proxy.kubeconfig"
+- name: 选择默认上下文
+  shell: "{{ bin_dir }}/kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig"
+
+- name: 安装kube-proxy.kubeconfig配置文件
+  shell: "mv $HOME/kube-proxy.kubeconfig /etc/kubernetes/kube-proxy.kubeconfig"
 - name: 创建kube-proxy的工作目录
   file: name=/var/lib/kube-proxy state=directory
 
