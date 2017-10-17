@@ -9,22 +9,24 @@
 - name: 集群hosts文件更新
   template: src=hosts.j2 dest=/etc/hosts
 
-# ca 证书脚本参见 files/ca.script
-- name: prepare ca files
-  copy: src={{ item }} dest={{ ca_dir }}/{{ item }} mode=0644
-  with_items:
-  - ca-config.json
-  - ca-csr.json
-  - ca.csr
-  - ca.pem
-  - ca-key.pem
+- name: 更新环境变量$PATH
+  shell: "export PATH=/root/local/bin:$PATH"
 
-- name: prepare ca tool binaries
+- name: 写入环境变量$PATH 
+  template: src=profile.j2 dest=/root/.profile
+
+- name: 下载证书工具 CFSSL
   copy: src={{ base_dir }}/bin/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
   with_items:
   - cfssl
   - cfssl-certinfo
   - cfssljson
 
-- name: prepare environment $PATH
-  template: src=profile.j2 dest=/root/.profile
+- name: 准备CA配置文件
+  template: src=ca-config.json.j2 dest={{ ca_dir }}/ca-config.json
+
+- name: 准备CA签名请求
+  template: src=ca-csr.json.j2 dest={{ ca_dir }}/ca-csr.json
+
+- name: 生成 CA 证书和私钥
+  shell: "cd {{ ca_dir }} && cfssl gencert -initca ca-csr.json | cfssljson -bare ca" 
