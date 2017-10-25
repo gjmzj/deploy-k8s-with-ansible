@@ -1,0 +1,5 @@
+#
+- hosts: deploy
+  gather_facts: False
+  roles:
+  - deploy
