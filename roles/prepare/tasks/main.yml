@@ -7,7 +7,7 @@
   - /etc/docker
 
 - name: 集群hosts文件更新
-  template: src=hosts.j2 dest=/etc/hosts
+  copy: src=hosts.j2 dest=/etc/hosts
 
 - name: 更新环境变量$PATH
   shell: "export PATH=/root/local/bin:$PATH"
@@ -22,11 +22,9 @@
   - cfssl-certinfo
   - cfssljson
 
-- name: 准备CA配置文件
-  template: src=ca-config.json.j2 dest={{ ca_dir }}/ca-config.json
-
-- name: 准备CA签名请求
-  template: src=ca-csr.json.j2 dest={{ ca_dir }}/ca-csr.json
-
-- name: 生成 CA 证书和私钥
-  shell: "cd {{ ca_dir }} && {{ bin_dir }}/cfssl gencert -initca ca-csr.json | {{ bin_dir }}/cfssljson -bare ca" 
+- name: 分发CA 证书
+  copy: src={{ item }} dest={{ ca_dir }}/{{ item }} mode=0644
+  with_items:
+  - ca.pem
+  - ca-key.pem
+  - ca.csr

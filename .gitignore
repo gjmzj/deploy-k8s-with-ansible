@@ -4,3 +4,6 @@ bin/
 ansible.cfg
 hosts
 *.crt
+ca.pem
+ca-key.pem
+ca.csr
