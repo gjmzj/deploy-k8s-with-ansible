@@ -1,3 +1,8 @@
+- hosts: deploy
+  gather_facts: False
+  roles:
+  - deploy
+
 - hosts: kube-cluster
   gather_facts: False
   roles:
