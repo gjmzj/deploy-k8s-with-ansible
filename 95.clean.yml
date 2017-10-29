@@ -3,9 +3,11 @@
   tasks:
   - name: stop kube-node service
     shell: "systemctl stop kubelet kube-proxy flanneld docker"
+    ignore_errors: true
 
   - name: umount kubelet 挂载的目录
     shell: "mount | grep '/var/lib/kubelet'| awk '{print $3}'|xargs umount"
+    ignore_errors: true
 
   - name: 清理目录和文件
     file: name={{ item }} state=absent
@@ -24,13 +26,15 @@
     shell: iptables -F && iptables -X && iptables -F -t nat && iptables -X -t nat
 
   - name: 清理网络
-    shell: ip link del docker0
+    shell: "ip link del docker0; ip link del flannel.1"
+    ignore_errors: true
 
 - hosts: kube-master
   gather_facts: False
   tasks:
   - name: stop kube-master service
     shell: "systemctl stop kube-apiserver kube-controller-manager kube-scheduler"
+    ignore_errors: true
 
   - name: 清理目录和文件
     file: name={{ item }} state=absent
@@ -46,6 +50,7 @@
   tasks:
   - name: stop etcd service
     shell: systemctl stop etcd
+    ignore_errors: true
 
   - name: 清理目录和文件
     file: name={{ item }} state=absent

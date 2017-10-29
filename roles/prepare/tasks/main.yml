@@ -28,3 +28,4 @@
   - ca.pem
   - ca-key.pem
   - ca.csr
+  - ca-config.json

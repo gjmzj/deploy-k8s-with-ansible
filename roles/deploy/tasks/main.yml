@@ -21,4 +21,4 @@
   shell: "cd {{ ca_dir }} && {{ bin_dir }}/cfssl gencert -initca ca-csr.json | {{ bin_dir }}/cfssljson -bare ca" 
 
 - name: 准备分发 CA证书
-  shell: "cd {{ ca_dir }} && cp ca.pem ca-key.pem ca.csr {{ base_dir }}/roles/prepare/files/"
+  shell: "cd {{ ca_dir }} && cp ca*  {{ base_dir }}/roles/prepare/files/"
