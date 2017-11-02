@@ -3,3 +3,8 @@
   gather_facts: False
   roles:
   - prepare
+#
+- hosts: lb
+  gather_facts: False
+  roles:
+  - lb

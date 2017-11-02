@@ -59,3 +59,20 @@
     - "/etc/etcd/"
     - "/etc/systemd/system/etcd.service"
 
+- hosts: lb
+  gather_facts: False
+  tasks:
+  - name: stop keepalived service
+    shell: systemctl disable keepalived && systemctl stop keepalived
+    ignore_errors: true
+
+  - name: stop haproxy service
+    shell: systemctl disable haproxy && systemctl stop haproxy
+    ignore_errors: true
+
+  - name: 清理LB 配置文件目录
+    file: name={{ item }} state=absent
+    with_items:
+    - "/etc/haproxy"
+    - "/etc/keepalived"
+    ignore_errors: true
