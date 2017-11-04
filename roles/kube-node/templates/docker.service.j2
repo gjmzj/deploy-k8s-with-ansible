@@ -6,6 +6,7 @@ Documentation=http://docs.docker.io
 Environment="PATH={{ bin_dir }}:/bin:/sbin:/usr/bin:/usr/sbin"
 EnvironmentFile=-/run/flannel/docker
 ExecStart={{ bin_dir }}/dockerd --log-level=error $DOCKER_NETWORK_OPTIONS
+ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
 ExecReload=/bin/kill -s HUP $MAINPID
 Restart=on-failure
 RestartSec=5
