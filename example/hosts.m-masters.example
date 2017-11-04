@@ -87,5 +87,5 @@ ca_dir="/etc/kubernetes/ssl"
 base_dir="/etc/ansible"
 
 #私有仓库 harbor服务器 (域名或者IP)
-#需要把 harbor服务器证书复制到roles/kube-node/files/harbor-ca.crt
+#需要把 harbor服务器证书复制到roles/harbor/files/harbor-ca.crt
 HARBOR_SERVER="harbor.yourdomain.com"
