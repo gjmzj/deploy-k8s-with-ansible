@@ -32,20 +32,6 @@
 - name: start-docker
   shell: systemctl restart docker
 
-#- name: filter-FORWARD-ACCEPT
-#  shell: sleep 5 && /sbin/iptables -P FORWARD ACCEPT
-
-# 如果rc.local有其他配置，根据需要修改roles/kube-node/template/rc.local.j2文件
-#- name: 确保节点重启后iptables filter FORWARD ACCEPT
-#  template: src=rc.local.j2 dest=/etc/rc.local
-
-- name: harbor证书目录创建
-  file: name=/etc/docker/certs.d/{{ HARBOR_SERVER }} state=directory
-
-# 需要先把harbor服务器证书复制到roles/kube-node/files/harbor-ca.crt
-- name: harbor服务器证书安装
-  copy: src=harbor-ca.crt dest=/etc/docker/certs.d/{{ HARBOR_SERVER }}/ca.crt
-
 ##----------kubelet 配置部分--------------
 - name: 下载 kubelet和kube-proxy 二进制
   copy: src={{ base_dir }}/bin/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
