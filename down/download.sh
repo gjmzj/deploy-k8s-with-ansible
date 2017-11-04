@@ -1,6 +1,6 @@
 #!/bin/bash
 #主要组件版本如下
-export K8S_VER=v1.7.8
+export K8S_VER=v1.8.2
 export ETCD_VER=v3.2.9
 export FLANNEL_VER=v0.9.0
 export DOCKER_VER=17.09.0-ce

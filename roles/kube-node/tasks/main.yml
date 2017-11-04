@@ -32,12 +32,12 @@
 - name: start-docker
   shell: systemctl restart docker
 
-- name: filter-FORWARD-ACCEPT
-  shell: sleep 5 && /sbin/iptables -P FORWARD ACCEPT
+#- name: filter-FORWARD-ACCEPT
+#  shell: sleep 5 && /sbin/iptables -P FORWARD ACCEPT
 
 # 如果rc.local有其他配置，根据需要修改roles/kube-node/template/rc.local.j2文件
-- name: 确保节点重启后iptables filter FORWARD ACCEPT
-  template: src=rc.local.j2 dest=/etc/rc.local
+#- name: 确保节点重启后iptables filter FORWARD ACCEPT
+#  template: src=rc.local.j2 dest=/etc/rc.local
 
 - name: harbor证书目录创建
   file: name=/etc/docker/certs.d/{{ HARBOR_SERVER }} state=directory
@@ -55,8 +55,9 @@
 
 # kubelet 启动时向 kube-apiserver 发送 TLS bootstrapping 请求，需要绑定该角色
 # 只需单节点执行一次，重复执行的报错可以忽略
+# 增加15s延迟，等待集群kube-apiserver启动
 - name: kubelet-bootstrap-setting
-  shell: "{{ bin_dir }}/kubectl create clusterrolebinding kubelet-bootstrap \
+  shell: "sleep 15 && {{ bin_dir }}/kubectl create clusterrolebinding kubelet-bootstrap \
         --clusterrole=system:node-bootstrapper --user=kubelet-bootstrap"
   when: NODE_ID is defined and NODE_ID == "node1"
   ignore_errors: true
@@ -99,7 +100,7 @@
   shell: systemctl restart kubelet
 
 - name: approve-kubelet-csr
-  shell: "{{ bin_dir }}/kubectl get csr|grep 'Pending' | awk 'NR>0{print $1}'| xargs {{ bin_dir }}/kubectl certificate approve"
+  shell: "sleep 15 && {{ bin_dir }}/kubectl get csr|grep 'Pending' | awk 'NR>0{print $1}'| xargs {{ bin_dir }}/kubectl certificate approve"
   when: NODE_ID is defined and NODE_ID == "node1"
   ignore_errors: true
 
