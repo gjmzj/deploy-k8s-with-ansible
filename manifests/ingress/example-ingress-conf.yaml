@@ -7,9 +7,9 @@ spec:
   - host: k8s.test.tf56
     http:
       paths:
-      - path: /durex
+      - path: /
         backend:
-          serviceName: durex
+          serviceName: test-hello
           servicePort: 80
       - path: /site
         backend:
