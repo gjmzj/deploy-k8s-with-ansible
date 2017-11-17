@@ -1,39 +1,31 @@
 - hosts: deploy
-  gather_facts: False
   roles:
   - deploy
 
 - hosts: kube-cluster
-  gather_facts: False
   roles:
   - prepare
 
 - hosts: lb
-  gather_facts: False
   roles:
   - lb
 
 - hosts: etcd
-  gather_facts: False
   roles:
   - etcd
 
 - hosts: kube-cluster
-  gather_facts: False
   roles:
   - kubectl
 
 - hosts: kube-cluster
-  gather_facts: False
   roles:
   - flanneld
 
 - hosts: kube-master
-  gather_facts: False
   roles:
   - kube-master
 
 - hosts: kube-node
-  gather_facts: False
   roles:
   - kube-node
