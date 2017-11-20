@@ -75,15 +75,19 @@
 
 - name: 创建kubelet的systemd unit文件
   template: src=kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
+  tags: kubelet-conf
 
 - name: daemon-reload
-  shell: systemctl daemon-reload
+  shell: systemctl daemon-reload 
+  tags: kubelet-conf
 
 - name: enable-kubelet
   shell: systemctl enable kubelet
+  tags: kubelet-conf
 
 - name: start-kubelet
   shell: systemctl restart kubelet
+  tags: kubelet-conf
 
 - name: approve-kubelet-csr
   shell: "sleep 15 && {{ bin_dir }}/kubectl get csr|grep 'Pending' | awk 'NR>0{print $1}'| xargs {{ bin_dir }}/kubectl certificate approve"

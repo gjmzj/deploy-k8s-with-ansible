@@ -1,4 +1,6 @@
-- hosts: kube-node
+- hosts:
+  - kube-node
+  - lb
   tasks:
   - name: stop kube-node service
     shell: "systemctl stop kubelet kube-proxy flanneld docker"

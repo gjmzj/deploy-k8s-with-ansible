@@ -55,7 +55,7 @@ spec:
           optional: true
       containers:
       - name: kubedns
-        image: harbor.tf56.lo/k8s/k8s-dns-kube-dns-amd64:1.14.4
+        image: mirrorgooglecontainers/k8s-dns-kube-dns-amd64:1.14.4
         resources:
           # TODO: Set memory limits when we've profiled the container for large
           # clusters, then set request = limit to keep this container in
@@ -107,7 +107,7 @@ spec:
         - name: kube-dns-config
           mountPath: /kube-dns-config
       - name: dnsmasq
-        image: harbor.tf56.lo/k8s/k8s-dns-dnsmasq-nanny-amd64:1.14.4
+        image: mirrorgooglecontainers/k8s-dns-dnsmasq-nanny-amd64:1.14.4
         livenessProbe:
           httpGet:
             path: /healthcheck/dnsmasq
@@ -145,7 +145,7 @@ spec:
         - name: kube-dns-config
           mountPath: /etc/k8s/dns/dnsmasq-nanny
       - name: sidecar
-        image: harbor.tf56.lo/k8s/k8s-dns-sidecar-amd64:1.14.4
+        image: mirrorgooglecontainers/k8s-dns-sidecar-amd64:1.14.4
         livenessProbe:
           httpGet:
             path: /metrics
@@ -168,7 +168,7 @@ spec:
           requests:
             memory: 20Mi
             cpu: 10m
-      imagePullSecrets:
-      - name: harbor-key1
+      #imagePullSecrets:
+      #- name: harbor-key1
       dnsPolicy: Default  # Don't use cluster DNS.
       serviceAccountName: kube-dns

@@ -10,11 +10,15 @@
 
 - name: 准备脚本写入集群 Pod 网段信息到 etcd
   template: src=save_to_etcd.sh.j2 dest=/tmp/save_to_etcd.sh
-  when: NODE_NAME is defined and NODE_NAME == "etcd1"
+  when: NODE_ID is defined and NODE_ID == "node1"
+
+- name: 准备etcdctl 用于写入pod 网段信息
+  copy: src={{ base_dir }}/bin/etcdctl dest={{ bin_dir }}/etcdctl mode=0755
+  when: NODE_ID is defined and NODE_ID == "node1"
 
 - name: 执行脚本写入集群 Pod 网段信息
   shell: /bin/bash /tmp/save_to_etcd.sh
-  when: NODE_NAME is defined and NODE_NAME == "etcd1"
+  when: NODE_ID is defined and NODE_ID == "node1"
 
 - name: 下载flanneld二进制
   copy: src={{ base_dir }}/bin/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755

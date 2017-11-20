@@ -6,7 +6,7 @@ metadata:
   namespace: kube-system
 ---
 
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/v1alpha1
 kind: ClusterRoleBinding
 metadata:
   name: heapster
@@ -37,7 +37,7 @@ spec:
       containers:
       - name: heapster
         #image: gcr.io/google_containers/heapster-amd64:v1.3.0
-        image: harbor.tf56.lo/k8s/heapster-amd64:v1.3.0
+        image: mirrorgooglecontainers/heapster-amd64:v1.3.0
         imagePullPolicy: IfNotPresent
         command:
         - /heapster
