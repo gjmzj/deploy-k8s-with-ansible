@@ -3,7 +3,7 @@
   - lb
   tasks:
   - name: stop kube-node service
-    shell: "systemctl stop kubelet kube-proxy flanneld docker"
+    shell: "systemctl stop kubelet kube-proxy docker"
     ignore_errors: true
 
   - name: umount kubelet 挂载的目录
@@ -16,19 +16,13 @@
     - "/var/lib/kubelet/"
     - "/var/lib/docker/"
     - "/var/run/docker/"
-    - "/var/run/flannel/"
     - "/etc/kubernetes/"
     - "/etc/systemd/system/kubelet.service"
     - "/etc/systemd/system/docker.service"
-    - "/etc/systemd/system/flanneld.service"
    # - "/root/local/bin/"
 
   - name: 清理 iptables
     shell: iptables -F && iptables -X && iptables -F -t nat && iptables -X -t nat
-
-  - name: 清理网络
-    shell: "ip link del docker0; ip link del flannel.1"
-    ignore_errors: true
 
 - hosts: kube-master
   tasks:
@@ -44,6 +38,22 @@
     - "/etc/systemd/system/kube-controller-manager.service" 
     - "/etc/systemd/system/kube-scheduler.service"
     - "/etc/kubernetes/"
+
+- hosts: kube-cluster
+  tasks:
+  - name: stop flannel service
+    shell: "systemctl stop flanneld"
+    ignore_errors: true
+
+  - name: 清理网络
+    shell: "ip link del docker0; systemctl restart networking; ip link del flannel.1"
+    ignore_errors: true
+
+  - name: 清理目录和文件
+    file: name={{ item }} state=absent
+    with_items:
+    - "/var/run/flannel/"
+    - "/etc/systemd/system/flanneld.service"
 
 - hosts: etcd 
   tasks:
