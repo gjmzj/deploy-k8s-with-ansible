@@ -1,4 +1,6 @@
 #!/bin/bash
+# 重要说明：关于flannel后端backend的选择，如果节点位于同一个二层可以选用 host-gw 类型
+# 如果节点不是一个二层（不是同网段）网络，只有三层可达，请选用 vxlan 类型
 {{ bin_dir }}/etcdctl --endpoints={{ ETCD_ENDPOINTS }} \
 	--ca-file={{ ca_dir }}/ca.pem \
 	--cert-file={{ ca_dir }}/flanneld.pem \
