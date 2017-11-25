@@ -1,6 +1,6 @@
 - hosts:
   - kube-node
-  - lb
+  - deploy
   tasks:
   - name: stop kube-node service
     shell: "systemctl stop kubelet kube-proxy docker"
@@ -39,7 +39,9 @@
     - "/etc/systemd/system/kube-scheduler.service"
     - "/etc/kubernetes/"
 
-- hosts: kube-cluster
+- hosts:
+  - kube-cluster
+  - deploy
   tasks:
   - name: stop flannel service
     shell: "systemctl stop flanneld"
@@ -54,6 +56,7 @@
     with_items:
     - "/var/run/flannel/"
     - "/etc/systemd/system/flanneld.service"
+    - "/root/.kube/"
 
 - hosts: etcd 
   tasks:
