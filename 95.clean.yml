@@ -19,6 +19,7 @@
     - "/etc/kubernetes/"
     - "/etc/systemd/system/kubelet.service"
     - "/etc/systemd/system/docker.service"
+    - "/etc/systemd/system/docker.service.requires/"
    # - "/root/local/bin/"
 
   - name: 清理 iptables
