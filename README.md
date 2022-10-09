@@ -1,3 +1,5 @@
+[Deprecated] please go to: "github.com/easzlab/kubeasz"
+
 # 利用Ansible部署kubernetes集群
 
 本文档记录自己实践部署高可用k8s集群的过程，利用ansible-playbook简化二进制方式部署过程。
